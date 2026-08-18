@@ -1,25 +1,27 @@
-name: 每日定时任务Demo
+name: Auto‑log Demo
 
 on:
+  push:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
+    - cron: '*/10 * * * *'
 
 jobs:
-  run-demo:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: 下载仓库代码
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 运行脚本，写入日志
+      - name: Write log file
         run: |
-          echo "任务执行完成，时间: $(date)" >> log.txt
+          echo "Run at $(date)" >> runlog.txt
 
-      - name: 提交保存日志文件
+      - name: Commit & Push
         run: |
-          git config --global user.name "song95596-调试"
-          git config --global user.email "song95596@gmail.com"
-          git add log.txt
-          git commit -m "自动更新日志 $(date)"
+          git config user.name "github‑actions[bot]"
+          git config user.email "github‑actions[bot]@users.noreply.github.com"
+          git add runlog.txt
+          git commit -m "Auto log update"
           git push
